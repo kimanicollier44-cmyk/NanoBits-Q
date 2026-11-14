@@ -24,6 +24,7 @@ import cmath
 import hashlib
 import json
 import math
+import os
 import random
 import re
 import sys
@@ -642,6 +643,12 @@ def run_scout_cycle(cycle: int = 1) -> dict:
             "tested": tested, "passed": passed, "failed": tested - passed,
             "deployed_to_sandbox": deployed, "repeats_blocked": repeats_blocked,
             "repeat_detail": repeat_detail, "registry_size": len(SANDBOX_REGISTRY),
+            "carbon4_sandbox_decision": carbon4_decide("sandbox deploy of verified formulas",
+                                                       {"passed": passed, "failed": tested - passed},
+                                                       "extended")["decision"],
+            "carbon4_real_decision": carbon4_decide("real deployment to live hardware",
+                                                    {"passed": passed, "failed": tested - passed},
+                                                    "extended")["decision"],
             "real_deployment": "HOLD - sandbox registry only"}
 
 def run_scout_loop(cycles: int = 2) -> list:
@@ -796,6 +803,115 @@ def create_new_inventions(count: int = 10) -> dict:
             "blocked_count": len(blocked),
             "real_invention": "HOLD - concept specs only, sandbox registry only"}
 
+# ---------------------------------------------------------------- merged brains: Gemini Argon 4 + Google Flow
+# Gemini Argon 4 = Gemini Carbon 4 Extended Thinking (Darion's house seat):
+# DECIDER, engine gemini-2.5-pro, model google/gemini-carbon-4-extended-pro-thinking,
+# MAP -> MODEL -> STRESS -> DECIDE with a hashed trace, thinking tiers
+# 2048 / 8192 / 32768 by stakes. Offline-authoritative: no live call is ever
+# made, the API key is names/presence-only, and a Carbon decision can only
+# TIGHTEN (HOLD beats PROCEED) - it can never override a HOLD gate.
+# Google Flow = all 4 flows, plan-only: FlowX task graph, Workspace Studio
+# drafting, Filmmaking storyboard, DataX data-flow. rendered=False, live_calls=0.
+HOLD_GATES.update({
+    "live_gemini_api_call": "HOLD - Carbon 4 runs offline-authoritative, no live Gemini call",
+    "live_video_generation": "HOLD - Google Flow filmmaking is storyboard plan only, never renders",
+    "flow_workspace_send": "HOLD - Workspace Studio drafts only, nothing is sent anywhere",
+})
+
+CARBON4 = {
+    "seat": "Gemini Argon 4 Extended Thinking (Gemini Carbon 4)",
+    "role": "DECIDER",
+    "engine": "gemini-2.5-pro",
+    "model": "google/gemini-carbon-4-extended-pro-thinking",
+    "phases": ["MAP", "MODEL", "STRESS", "DECIDE"],
+    "tiers": {"standard": 2048, "deep": 8192, "extended": 32768},
+    "key_name": "GEMINI_API_KEY",
+    "live_calls": 0,
+    "can_override_hold": False,
+}
+
+def carbon4_tier(stakes: str) -> int:
+    return CARBON4["tiers"].get(stakes, CARBON4["tiers"]["extended"])
+
+def carbon4_key_presence() -> dict:
+    """Names/presence only - the value is never read into output or logs."""
+    env_name = CARBON4["key_name"]
+    present = bool(os.environ.get(env_name))
+    return {"key_name": env_name, "present": present,
+            "note": "presence only - value never read, printed, or stored"}
+
+def carbon4_decide(subject: str, evidence: dict = None, stakes: str = "extended") -> dict:
+    evidence = evidence or {}
+    budget = carbon4_tier(stakes)
+    subj = subject.lower()
+    hold_hit = any(g.replace("_", " ") in subj or g in subj for g in HOLD_GATES)
+    real_world = any(w in subj for w in ("real deployment", "live hardware", "fabricat", "sell"))
+    failed = int(evidence.get("failed", 0))
+    passed = int(evidence.get("passed", 0))
+    trace = {
+        "MAP": f"subject={subject}; evidence keys={sorted(evidence)}",
+        "MODEL": f"passed={passed} failed={failed}; models SLM/LLM/ML/NNL feed this stage as evidence only",
+        "STRESS": f"hold_gate_match={hold_hit or real_world}; planted-failure tolerance=1; repeats are VerifyBot's call",
+        "DECIDE": "",
+    }
+    if hold_hit or real_world:
+        decision, reason = "HOLD", "subject touches a HOLD gate - Carbon can tighten, never loosen"
+    elif failed > 1:
+        decision, reason = "HOLD", f"{failed} failures exceed the planted-failure tolerance of 1"
+    elif passed == 0 and evidence:
+        decision, reason = "HOLD", "no passing evidence to decide on"
+    else:
+        decision, reason = "PROCEED", "evidence passes and no HOLD gate is touched (sandbox scope only)"
+    trace["DECIDE"] = f"{decision} - {reason}"
+    trace_hash = hashlib.sha256(json.dumps(trace, sort_keys=True).encode()).hexdigest()
+    return {"seat": CARBON4["seat"], "role": "DECIDER", "model": CARBON4["model"],
+            "thinking_budget": budget, "subject": subject, "decision": decision,
+            "reason": reason, "trace": trace, "trace_hash": trace_hash,
+            "live_calls": 0, "can_override_hold": False}
+
+# ---- Google Flow: 4 flows, plan-only
+def flowx_graph() -> dict:
+    steps = ["gather_top20", "deconstruct", "gather_local", "test_formulas", "verifybot_check",
+             "carbon4_decide", "sandbox_deploy", "model_brief", "report", "repeat"]
+    return {"flow": "Gemini FlowX", "steps": steps, "subtasks": len(steps),
+            "recommended_agents": 3, "queue_wait": 0, "live_calls": 0, "rendered": False}
+
+def flow_workspace_studio(topic: str = "NanoBits-Q") -> dict:
+    return {"flow": "Google Workspace Studio", "drafts": [f"{topic} summary doc (draft only)",
+            f"{topic} release notes (draft only)", f"{topic} invention table (draft only)"],
+            "sent": False, "live_calls": 0, "rendered": False,
+            "note": "drafts are local text plans - nothing is sent or published"}
+
+def flow_filmmaking(topic: str = "NanoBits-Q - quantum nano-bits") -> dict:
+    shots = [
+        {"shot": 1, "track": "setup", "prompt": f"Opening: a single electron spinning inside a glowing 40 nm quantum dot, title {topic}"},
+        {"shot": 2, "track": "analyze", "prompt": "Seven qubit modalities rise as holographic chips - silicon, superconducting, diamond, photonic, ion, atom, topological"},
+        {"shot": 3, "track": "analyze", "prompt": "Scout robots gather blueprints of the Top 20 company inventions and take them apart into LEGO-like components"},
+        {"shot": 4, "track": "verdict", "prompt": "VerifyBot stamps NOVEL on 10 recombined hybrid machines and blocks every repeat with a red REPEAT stamp"},
+        {"shot": 5, "track": "teardown", "prompt": "Closing: the sandbox registry glows with 7 formulas + 10 concepts, HOLD gates lock real hardware away, MIT logo fades in"},
+    ]
+    return {"flow": "Google Flow Filmmaking", "topic": topic, "shots": shots,
+            "shot_count": len(shots), "rendered": False, "live_calls": 0,
+            "note": "storyboard plan only - no video is generated or rendered"}
+
+def flow_datax() -> dict:
+    return {"flow": "DataX google_flow", "pipeline": ["registry_snapshot", "component_extract",
+            "dedupe_by_fingerprint", "paper_score", "sandbox_sink"],
+            "live_calls": 0, "rendered": False,
+            "note": "local data-flow plan for Top 20 registry updates - no external data moves"}
+
+def google_flows(topic: str = "NanoBits-Q - quantum nano-bits") -> dict:
+    return {"flows": [flowx_graph(), flow_workspace_studio(), flow_filmmaking(topic), flow_datax()],
+            "flow_count": 4, "all_plan_only": True, "live_calls": 0, "rendered": False}
+
+def brains() -> dict:
+    return {"carbon4": CARBON4, "carbon4_key": carbon4_key_presence(),
+            "sample_decision": carbon4_decide("sandbox deploy of verified formulas",
+                                              {"passed": 7, "failed": 1}, "extended"),
+            "google_flow": google_flows(),
+            "local_models": ["TinySLM", "TinyLLM", "MLModalityClassifier", "TinyMLP"],
+            "authority_rule": "Carbon 4 DECIDES inside sandbox scope; HOLD gates outrank every brain"}
+
 # ---------------------------------------------------------------- checks
 def run_checks():
     checks = []
@@ -868,6 +984,21 @@ def run_checks():
     add("New inventions are unique vs each other", len({c["name"] for c in inv["created"]}) == inv["created_count"])
     inv2 = create_new_inventions(10)
     add("Re-creating the same inventions is blocked by VerifyBot", inv2["created_count"] == 0 and inv2["blocked_count"] == 10)
+    # merged brains: Gemini Argon 4 (Carbon 4) + Google Flow
+    add("Carbon 4 seat: decider, right model + engine", CARBON4["role"] == "DECIDER" and CARBON4["model"] == "google/gemini-carbon-4-extended-pro-thinking" and CARBON4["engine"] == "gemini-2.5-pro")
+    add("Carbon 4 tiers 2048/8192/32768", (carbon4_tier("standard"), carbon4_tier("deep"), carbon4_tier("extended")) == (2048, 8192, 32768))
+    d_ok = carbon4_decide("sandbox deploy of verified formulas", {"passed": 7, "failed": 1}, "extended")
+    add("Carbon 4 PROCEED on clean sandbox evidence, budget 32768", d_ok["decision"] == "PROCEED" and d_ok["thinking_budget"] == 32768)
+    add("Carbon 4 trace has 4 phases + 64-char hash", list(d_ok["trace"]) == ["MAP", "MODEL", "STRESS", "DECIDE"] and len(d_ok["trace_hash"]) == 64)
+    add("Carbon 4 HOLD on real deployment (cannot override HOLD)", carbon4_decide("real deployment to live hardware", {"passed": 7, "failed": 0})["decision"] == "HOLD" and CARBON4["can_override_hold"] is False)
+    add("Carbon 4 HOLD when failures exceed tolerance", carbon4_decide("sandbox deploy", {"passed": 2, "failed": 5})["decision"] == "HOLD")
+    add("Carbon 4 key is names/presence only, live calls 0", carbon4_key_presence()["key_name"] == "GEMINI_API_KEY" and CARBON4["live_calls"] == 0)
+    gf = google_flows()
+    add("Google Flow: all 4 flows, plan-only", gf["flow_count"] == 4 and gf["all_plan_only"] and gf["live_calls"] == 0 and gf["rendered"] is False)
+    add("Flow Filmmaking: 5-shot storyboard, not rendered", flow_filmmaking()["shot_count"] == 5 and flow_filmmaking()["rendered"] is False)
+    add("FlowX graph covers the scout pipeline", flowx_graph()["subtasks"] >= 10 and "verifybot_check" in flowx_graph()["steps"])
+    add("Brains view fuses Carbon 4 + Flow + local models", len(brains()["local_models"]) == 4 and brains()["google_flow"]["flow_count"] == 4)
+    add("HOLD gates now 17", len(HOLD_GATES) == 17)
     return checks
 
 def _raises(fn):
@@ -883,7 +1014,7 @@ def main(argv=None):
                    choices=["demo", "modalities", "bell", "ghz", "grover", "shor",
                             "dot", "decoherence", "ecc", "brief", "models", "scouts",
                             "formulas", "verify", "top20", "deconstruct", "invent",
-                            "checks", "holds"])
+                            "brains", "carbon", "flow", "checks", "holds"])
     p.add_argument("--modality", default="silicon_spin")
     p.add_argument("--n", type=int, default=15)
     p.add_argument("--size", type=float, default=40.0)
@@ -933,6 +1064,13 @@ def main(argv=None):
         reset_scout_state(); r = create_new_inventions(10)
         for c in r["created"]: print(c)
         print(f"created {r['created_count']}, blocked {r['blocked_count']}"); return 0
+    if args.cmd == "brains": print(brains()); return 0
+    if args.cmd == "carbon":
+        print(carbon4_decide("sandbox deploy of verified formulas", {"passed": 7, "failed": 1}, "extended"))
+        print(carbon4_decide("real deployment to live hardware", {"passed": 7, "failed": 0}, "extended")); return 0
+    if args.cmd == "flow":
+        for f in google_flows()["flows"]: print(f)
+        return 0
     if args.cmd == "formulas":
         for f in FORMULAS: print(f["id"], f["name"], "PASS" if test_formula(f) else "FAIL")
         return 0

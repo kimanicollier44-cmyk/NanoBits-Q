@@ -80,6 +80,26 @@ def test_new_inventions_not_repeats_of_top20():
 def test_recreate_blocked_by_verifybot():
     nb.reset_scout_state(); nb.create_new_inventions(10); r2 = nb.create_new_inventions(10)
     assert r2["created_count"] == 0 and r2["blocked_count"] == 10
+def test_carbon4_config():
+    assert nb.CARBON4["role"] == "DECIDER" and nb.CARBON4["model"] == "google/gemini-carbon-4-extended-pro-thinking" and nb.CARBON4["can_override_hold"] is False
+def test_carbon4_tiers(): assert (nb.carbon4_tier("standard"), nb.carbon4_tier("deep"), nb.carbon4_tier("extended")) == (2048, 8192, 32768)
+def test_carbon4_proceed_sandbox():
+    d = nb.carbon4_decide("sandbox deploy of verified formulas", {"passed": 7, "failed": 1}); assert d["decision"] == "PROCEED" and len(d["trace_hash"]) == 64
+def test_carbon4_hold_real(): assert nb.carbon4_decide("real deployment to live hardware", {"passed": 7, "failed": 0})["decision"] == "HOLD"
+def test_carbon4_hold_failures(): assert nb.carbon4_decide("sandbox deploy", {"passed": 2, "failed": 5})["decision"] == "HOLD"
+def test_carbon4_key_presence_only(): assert nb.carbon4_key_presence()["key_name"] == "GEMINI_API_KEY"
+def test_google_flows_plan_only():
+    gf = nb.google_flows(); assert gf["flow_count"] == 4 and gf["live_calls"] == 0 and gf["rendered"] is False
+def test_flow_filmmaking_storyboard(): assert nb.flow_filmmaking()["shot_count"] == 5
+def test_flowx_graph(): assert "verifybot_check" in nb.flowx_graph()["steps"]
+def test_brains_fusion(): assert len(nb.brains()["local_models"]) == 4
+def test_hold_gates_17(): assert len(nb.HOLD_GATES) == 17
+def test_scout_cycle_carbon_fields():
+    nb.reset_scout_state(); c = nb.run_scout_cycle(1)
+    assert c["carbon4_sandbox_decision"] == "PROCEED" and c["carbon4_real_decision"] == "HOLD"
+def test_cli_brains(): assert nb.main(["brains"]) == 0
+def test_cli_carbon(): assert nb.main(["carbon"]) == 0
+def test_cli_flow(): assert nb.main(["flow"]) == 0
 def test_brief_llm_extends(): assert len(nb.model_brief("silicon_spin")["llm_draft"]) > 25
 def test_cli_demo(): assert nb.main(["demo"]) == 0
 def test_cli_scouts(): assert nb.main(["scouts"]) == 0

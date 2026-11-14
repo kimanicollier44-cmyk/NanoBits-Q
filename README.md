@@ -15,7 +15,7 @@
 
 👨‍💻 Created by Darion Kellar · 📜 MIT License · 🐍 Pure Python standard library, zero dependencies, zero network
 
-> 🔒 Educational local simulation only. No live quantum hardware, no QPU cloud, no chip fabrication — every real-hardware action is a permanent HOLD gate (14 total).
+> 🔒 Educational local simulation only. No live quantum hardware, no QPU cloud, no chip fabrication — every real-hardware action is a permanent HOLD gate (17 total).
 
 ---
 
@@ -41,7 +41,8 @@
 ![VerifyBot](https://img.shields.io/badge/VerifyBot-Repeat_Guard-red)
 ![Top 20](https://img.shields.io/badge/Top_20-Inventions-blue)
 ![New Concepts](https://img.shields.io/badge/New_Concepts-10-teal)
-![HOLD Gates](https://img.shields.io/badge/HOLD_Gates-14-critical)
+![HOLD Gates](https://img.shields.io/badge/HOLD_Gates-17-critical)
+![Brains](https://img.shields.io/badge/Brains-Argon_4_+_Flow-purple)
 ![Platform](https://img.shields.io/badge/Platform-Linux_|_macOS_|_Windows-lightgrey)
 
 | Category | Stack |
@@ -109,6 +110,13 @@ A normal computer bit is a switch: 0 or 1. A **nano-bit** (qubit) is a single el
 | 💬 LLM — TinyLLM | Trigram drafter, from scratch — **not** a production LLM | Drafts a sentence continuing a prompt, deterministic per seed |
 | 📊 ML — MLModalityClassifier | kNN classifier, from scratch | Labels each modality: fault-tolerant candidate / promising / early / unproven |
 | 🕸️ NNL — TinyMLP | 4-8-1 backprop neural network, from scratch | Outputs a 0-1 scale-risk score per modality (topological scores highest — correctly) |
+
+### 🧠🎬 Merged brains: Gemini Argon 4 + Google Flow
+
+| Brain | Seat | How it works here |
+|---|---|---|
+| 🧠 **Gemini Argon 4 Extended Thinking** (Gemini Carbon 4) | **DECIDER** | Engine `gemini-2.5-pro`, model `google/gemini-carbon-4-extended-pro-thinking`. Every decision runs **MAP → MODEL → STRESS → DECIDE** with a sha256 trace hash. Thinking tiers **2048 / 8192 / 32768** by stakes (32768 for deploy decisions). It PROCEEDs clean sandbox evidence and HOLDs anything touching a real-world gate — it can only tighten, **never override a HOLD**. `GEMINI_API_KEY` is names/presence-only; live calls: 0. The scout cycle records both verdicts: sandbox deploy = PROCEED, real deployment = HOLD. Commands: `python3 main.py brains` / `python3 main.py carbon` |
+| 🎬 **Google Flow** (all 4 flows) | Planner | **FlowX** — the scout/invent pipeline as a 10-step task graph · **Workspace Studio** — summary/release-note drafts, nothing sent · **Filmmaking** — a 5-shot storyboard (setup → analyze ×2 → verdict → teardown) with Veo-style prompts for a NanoBits-Q explainer, **plan only, never rendered** · **DataX google_flow** — local data-flow plan for Top 20 registry updates. `rendered=False`, `live_calls=0` across all four. Command: `python3 main.py flow` |
 
 ---
 
@@ -212,7 +220,7 @@ Quantum computing education and research-tracking have real problems: the field 
 | 🧊 A dilution refrigerator | 🤣 No | Temperatures are *modelled* (0.015 K included) — operating one is a HOLD gate |
 | ⚛️ A real quantum computer | 🚫 No | Simulated at ≤6 qubits; real hardware is a HOLD gate |
 
-**🔒 HOLD gates (14):** `live_quantum_hardware` · `qpu_cloud_access` · `chip_fabrication` · `cryogenic_operation` · `claim_fault_tolerance` · `claim_quantum_advantage` · `control_real_device` · `sell_hardware` · `scout_live_web` · `deploy_real_hardware` · `deploy_live_formula_to_qpu` · `copy_proprietary_design` · `manufacture_new_invention` · `claim_new_invention_works`
+**🔒 HOLD gates (17):** `live_quantum_hardware` · `qpu_cloud_access` · `chip_fabrication` · `cryogenic_operation` · `claim_fault_tolerance` · `claim_quantum_advantage` · `control_real_device` · `sell_hardware` · `scout_live_web` · `deploy_real_hardware` · `deploy_live_formula_to_qpu` · `copy_proprietary_design` · `manufacture_new_invention` · `claim_new_invention_works` · `live_gemini_api_call` · `live_video_generation` · `flow_workspace_send`
 
 ---
 
@@ -253,7 +261,7 @@ flowchart TD
     M --> N["💡 Recombine 3 parents"]
     N --> I
     J --> Z
-    Z --> O["🔒 14 HOLD gates<br/>no real hardware, ever"]
+    Z --> O["🔒 17 HOLD gates<br/>no real hardware, ever"]
 ```
 
 ### 📜 Diagram per script
