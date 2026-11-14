@@ -36,7 +36,15 @@ def test_brief():
     b = nb.model_brief("silicon_spin"); assert b["can_override_hold"] is False and b["authority"].startswith("none")
 def test_checks_all_pass():
     checks = nb.run_checks(); assert all(ok for _, ok in checks), [n for n, ok in checks if not ok]
-def test_scout_bots(): assert len(nb.SCOUT_BOTS) >= 9
+def test_scout_bots(): assert len(nb.SCOUT_BOTS) == 20
+def test_novelty_squad(): assert len(nb.NOVELTY_SQUAD) == 5 and "PriorArtScout" in nb.NOVELTY_SQUAD
+def test_prior_art_report():
+    r = nb.prior_art_report(); assert r["concepts_checked"] == 10 and r["exact_matches_found"] == []
+def test_prior_art_project_name(): assert nb.novelty_check("PROJECT")["verdict"] == "no_exact_match_found"
+def test_prior_art_closest_n03():
+    r = nb.prior_art_report(); assert r["closest_match"]["concept"] == "N03" and r["closest_match"]["similarity"] == 0.83
+def test_prior_art_findings_sourced(): assert all(f["source"] for f in nb.PRIOR_ART_FINDINGS) and len(nb.PRIOR_ART_FINDINGS) == 11
+def test_cli_priorart(): assert nb.main(["priorart"]) == 0
 def test_scout_gather_local_only():
     nb.reset_scout_state(); c = nb.run_scout_cycle(1); assert c["gathered"] > 20 and c["all_live_false"]
 def test_scout_formulas_wrong_fails():

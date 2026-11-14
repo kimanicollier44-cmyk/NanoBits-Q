@@ -509,6 +509,7 @@ class ScoutBot:
     name: str
     domain: str
     focus_keys: tuple = ()
+    role: str = "gather"   # gather | prior_art (novelty squad)
     def gather(self) -> list:
         records = []
         for m in MODALITIES:
@@ -536,7 +537,21 @@ SCOUT_BOTS = (
     ScoutBot("FormulaScout", "formulas", ()),
     ScoutBot("TechScout", "tech", ()),
     ScoutBot("DeconstructionScout", "deconstruction", ()),
+    ScoutBot("ChipScout", "chip", ("silicon_spin",)),
+    ScoutBot("CryoTechScout", "cryo", ("superconducting",)),
+    ScoutBot("QECScout", "code", ()),
+    ScoutBot("LinkScout", "photonic", ("photonic",)),
+    ScoutBot("MarketScout", "company", ()),
+    # --- Novelty squad: their job is to check whether anyone already
+    # created the same thing (prior-art watch over the offline snapshot).
+    ScoutBot("PriorArtScout", "prior", (), role="prior_art"),
+    ScoutBot("PatentScout", "patent", (), role="prior_art"),
+    ScoutBot("PaperScout", "paper", (), role="prior_art"),
+    ScoutBot("GitHubScout", "github", (), role="prior_art"),
+    ScoutBot("NewsScout", "news", (), role="prior_art"),
 )
+
+NOVELTY_SQUAD = tuple(b.name for b in SCOUT_BOTS if b.role == "prior_art")
 
 SANDBOX_REGISTRY = []  # deployed formulas/tech live here ONLY (data, in-memory)
 
@@ -795,13 +810,103 @@ def create_new_inventions(count: int = 10) -> dict:
         SANDBOX_REGISTRY.append(entry)
         created.append({"id": entry["formula_id"], "name": name, "parents": parents,
                         "components": signature.split("|"), "paper_score": score,
-                        "verify": "novel", "status": "concept_only - not built, not claimed to work"})
+                        "verify": "novel", "status": "concept_only - not built, not claimed to work",
+                        "prior_art": "checked_by_novelty_squad - see prior_art_report()"})
     return {"bot": "DeconstructionScout", "gathered_top20": len(TOP20),
             "deconstructed": len(DECONSTRUCTION_SCOUT.deconstruct_all()),
             "concepts_tested": tested_concepts, "created": created,
             "created_count": len(created), "blocked": blocked,
             "blocked_count": len(blocked),
             "real_invention": "HOLD - concept specs only, sandbox registry only"}
+
+# ---------------------------------------------------------------- prior-art / novelty search (novelty squad)
+# Question the squad answers: "did anyone already create the same thing?"
+# Method: (1) VerifyBot already proves no repeat INSIDE this lab; (2) the
+# novelty squad compares each new concept against an offline snapshot of
+# real-world prior art found by live web searches run on 2026-11-14
+# (papers, company roadmaps, products). similarity = assessed component
+# overlap 0..1. A verdict of no_exact_match_found means: in the sources
+# searched, nobody was found with the same full combination - components
+# DO have prior art (that is where they came from), and absence in searched
+# sources is not legal proof of world-first novelty. The squad's live web
+# watch itself stays HOLD (scout_live_web); this snapshot is data.
+PRIOR_ART_SEARCHED_ON = "2026-11-14"
+PRIOR_ART_SOURCES = ["arXiv / PRX Quantum papers", "company roadmaps (IBM, Google, Quantinuum, PsiQuantum)",
+                     "product + vendor pages (SeeQC, D-Wave, NVIDIA NVQLink)", "web name search for 'NanoBits-Q'"]
+
+PRIOR_ART_FINDINGS = (
+    {"concept": "PROJECT", "closest": "No project, product, or repository named 'NanoBits-Q' found",
+     "source": "Web name search, 2026-11-14 (only unrelated nanoqubit papers surfaced)", "year": 2026,
+     "similarity": 0.0, "note": "The NanoBits-Q name and lab design appear unused by anyone else in searched sources."},
+    {"concept": "N01", "closest": "Quantinuum color code below threshold on Helios (trapped ions)",
+     "source": "arXiv:2610.24077 (2026)", "year": 2026, "similarity": 0.62,
+     "note": "Color-code QEC is proven - on ions. No superconducting core + color code + photonic interconnect machine found."},
+    {"concept": "N02", "closest": "SeeQC / D-Wave on-chip cryogenic control for superconducting qubits",
+     "source": "Vendor engineering reports (2025-2026)", "year": 2026, "similarity": 0.66,
+     "note": "Superconducting + surface code + on-chip cryo control is mainstream engineering; the exact packaged combination was not found as one named system."},
+    {"concept": "N03", "closest": "IBM fault-tolerance roadmap: Loon qLDPC + Kookaburra qLDPC memory module + cryo control (Starling 2029)",
+     "source": "IBM Quantum roadmap + processor pages (2025-2026)", "year": 2026, "similarity": 0.83,
+     "note": "CLOSEST MATCH OF ALL 10: this recombination is essentially IBM's own stated plan - flagged, not hidden. Still a roadmap, not a shipped machine."},
+    {"concept": "N04", "closest": "Google Willow surface-code machine + cryogenic wiring engineering",
+     "source": "Google Quantum AI Willow results (2024-2025)", "year": 2025, "similarity": 0.60,
+     "note": "All components exist at Google; the specific 3-parent combination is this lab's recombination, not a Google product."},
+    {"concept": "N05", "closest": "Atom Computing toric code demonstrated on NEUTRAL ATOMS (2026)",
+     "source": "Atom Computing toric-code demonstration reports (2026)", "year": 2026, "similarity": 0.45,
+     "note": "Toric code exists - on atoms. On topological/Majorana qubits it cannot exist yet: the qubits themselves are unproven."},
+    {"concept": "N06", "closest": "PsiQuantum fusion-based photonic quantum computing",
+     "source": "PsiQuantum architecture publications (2025)", "year": 2025, "similarity": 0.50,
+     "note": "Fusion QEC + photonic links are PsiQuantum's core - with a photonic core, not a topological one. No topological-core version found."},
+    {"concept": "N07", "closest": "Fault-tolerant hybrid qubits: bosonic cat code + single photons, fusion architectures",
+     "source": "PRX Quantum 5, 030322 (2024) / arXiv:2401.00450", "year": 2024, "similarity": 0.75,
+     "note": "STRONG prior art: cat + fusion + photonic in one peer-reviewed architecture. Difference: that paper's hybrid CV-DV qubit vs this concept's cat core + separate optical sensing link. Flagged close."},
+    {"concept": "N08", "closest": "Quantinuum logical qubits (surface/color codes) on trapped ions",
+     "source": "Quantinuum Helios results (2025)", "year": 2025, "similarity": 0.55,
+     "note": "Ion logical qubits exist; ions run near room temperature, so the cryo-wiring link makes this combination uncommon - not found as one system."},
+    {"concept": "N09", "closest": "Quantinuum Helios + NVIDIA NVQLink GPU-hybrid link (the T08 parent itself)",
+     "source": "Quantinuum / NVIDIA NVQLink announcements (2025)", "year": 2025, "similarity": 0.70,
+     "note": "The GPU-hybrid link component is the parent's own product; combined with an IonQ-style surface-code trap core it was not found elsewhere."},
+    {"concept": "N10", "closest": "Cryogenic neutral-atom arrays (extended Rydberg lifetimes at 4 K) + QuEra surface-code logical atoms",
+     "source": "PRX Quantum 7, 033009 (2026); QuEra/Harvard logical-atom results (2026)", "year": 2026, "similarity": 0.65,
+     "note": "Cryo atom arrays and surface-code atoms both exist separately; a modular cryo-linked surface-code atom machine was not found as one system."},
+)
+
+def _concept_name_for_index(k: int) -> str:
+    a = TOP20[k % len(TOP20)]; b = TOP20[(k + 7) % len(TOP20)]; c = TOP20[(k + 13) % len(TOP20)]
+    return _new_invention_name(a.core, b.ecc, c.link, k + 1)
+
+def novelty_check(concept_id: str) -> dict:
+    """Offline prior-art verdict for one concept id (N01..N10 or PROJECT)."""
+    for f in PRIOR_ART_FINDINGS:
+        if f["concept"] == concept_id:
+            exact = f["similarity"] >= 0.9
+            return {"concept": concept_id, "verdict": "exact_match_found" if exact else "no_exact_match_found",
+                    "closest_match": f["closest"], "source": f["source"], "year": f["year"],
+                    "similarity": f["similarity"], "note": f["note"],
+                    "searched_on": PRIOR_ART_SEARCHED_ON, "live": False,
+                    "scope": "searched sources only - not legal proof of world-first novelty"}
+    return {"concept": concept_id, "verdict": "not_searched", "live": False}
+
+def prior_art_report() -> dict:
+    """The novelty squad's full report over the project + all 10 concepts."""
+    entries = []
+    for k in range(10):
+        cid = f"N{k + 1:02d}"
+        chk = novelty_check(cid)
+        entries.append({"concept": cid, "name": _concept_name_for_index(k), **chk})
+    project = novelty_check("PROJECT")
+    exact = [e["concept"] for e in entries if e["verdict"] == "exact_match_found"]
+    closest = max(entries, key=lambda e: e["similarity"])
+    return {"squad": list(NOVELTY_SQUAD), "squad_size": len(NOVELTY_SQUAD),
+            "searched_on": PRIOR_ART_SEARCHED_ON, "sources": PRIOR_ART_SOURCES,
+            "project_name_check": project, "concepts": entries,
+            "concepts_checked": len(entries), "exact_matches_found": exact,
+            "closest_match": {"concept": closest["concept"], "similarity": closest["similarity"],
+                              "closest_match": closest["closest_match"]},
+            "summary": ("No exact same full combination found in searched sources for the project "
+                        "name or any of the 10 concepts. Components have prior art by design - "
+                        "closest is N03 at 0.83 (IBM's own roadmap)."),
+            "live_web_watch": "HOLD - scout_live_web gate stands; this is an offline snapshot",
+            "honesty": "Absence in searched sources is not proof nobody ever built it - it is a searched-sources verdict."}
 
 # ---------------------------------------------------------------- merged brains: Gemini Argon 4 + Google Flow
 # Gemini Argon 4 = Gemini Carbon 4 Extended Thinking (Darion's house seat):
@@ -954,7 +1059,7 @@ def run_checks():
     add("Brief LLM draft actually extends prompt", len(brief["llm_draft"]) > len("silicon spin qubits") + 5)
     add("Brief SLM summary is a real sentence", len(brief["slm_summary"]) > 20)
     # scout bots + VerifyBot repeat guard
-    add("Scout bots >= 9 named", len(SCOUT_BOTS) >= 9 and all(b.name.endswith("Scout") for b in SCOUT_BOTS))
+    add("Scout bots: 20 named", len(SCOUT_BOTS) == 20 and all(b.name.endswith("Scout") for b in SCOUT_BOTS))
     reset_scout_state()
     cyc = run_scout_cycle(1)
     add("Scouts gather local-only (live=False)", cyc["gathered"] > 20 and cyc["all_live_false"])
@@ -999,6 +1104,15 @@ def run_checks():
     add("FlowX graph covers the scout pipeline", flowx_graph()["subtasks"] >= 10 and "verifybot_check" in flowx_graph()["steps"])
     add("Brains view fuses Carbon 4 + Flow + local models", len(brains()["local_models"]) == 4 and brains()["google_flow"]["flow_count"] == 4)
     add("HOLD gates now 17", len(HOLD_GATES) == 17)
+    # novelty squad / prior-art search
+    add("Novelty squad: 5 prior-art bots", len(NOVELTY_SQUAD) == 5 and "PriorArtScout" in NOVELTY_SQUAD)
+    rep = prior_art_report()
+    add("Prior-art report covers project + 10 concepts", rep["concepts_checked"] == 10 and rep["project_name_check"]["verdict"] == "no_exact_match_found")
+    add("Prior-art: no exact same combination found", rep["exact_matches_found"] == [])
+    add("Prior-art: closest is N03 (IBM roadmap) at 0.83", rep["closest_match"]["concept"] == "N03" and abs(rep["closest_match"]["similarity"] - 0.83) < 1e-9)
+    add("Prior-art findings all sourced + dated", all(f.get("source") for f in PRIOR_ART_FINDINGS) and PRIOR_ART_SEARCHED_ON == "2026-11-14")
+    add("Prior-art honesty scope is stated", "not legal proof" in rep["concepts"][0]["scope"] if rep["concepts"] else False)
+    add("Novelty live web watch stays HOLD", "scout_live_web" in HOLD_GATES)
     return checks
 
 def _raises(fn):
@@ -1014,7 +1128,7 @@ def main(argv=None):
                    choices=["demo", "modalities", "bell", "ghz", "grover", "shor",
                             "dot", "decoherence", "ecc", "brief", "models", "scouts",
                             "formulas", "verify", "top20", "deconstruct", "invent",
-                            "brains", "carbon", "flow", "checks", "holds"])
+                            "brains", "carbon", "flow", "priorart", "checks", "holds"])
     p.add_argument("--modality", default="silicon_spin")
     p.add_argument("--n", type=int, default=15)
     p.add_argument("--size", type=float, default=40.0)
@@ -1070,6 +1184,12 @@ def main(argv=None):
         print(carbon4_decide("real deployment to live hardware", {"passed": 7, "failed": 0}, "extended")); return 0
     if args.cmd == "flow":
         for f in google_flows()["flows"]: print(f)
+        return 0
+    if args.cmd == "priorart":
+        r = prior_art_report(); print(r["summary"])
+        print("Project name:", r["project_name_check"]["verdict"], "-", r["project_name_check"]["closest_match"])
+        for e in r["concepts"]:
+            print(f"{e['concept']}: {e['verdict']} (closest {e['similarity']:.2f}) - {e['closest_match']}")
         return 0
     if args.cmd == "formulas":
         for f in FORMULAS: print(f["id"], f["name"], "PASS" if test_formula(f) else "FAIL")

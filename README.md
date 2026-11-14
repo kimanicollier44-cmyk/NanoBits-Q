@@ -3,15 +3,15 @@
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen)
-![Tests](https://img.shields.io/badge/Tests-53_Passed-brightgreen)
-![CHECKS](https://img.shields.io/badge/CHECKS-50%2F50-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-74_Passed-brightgreen)
+![CHECKS](https://img.shields.io/badge/CHECKS-69%2F69-brightgreen)
 ![Quantum](https://img.shields.io/badge/Quantum-NanoBits-blueviolet)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 ![Network](https://img.shields.io/badge/Network-Zero-blue)
 ![Models](https://img.shields.io/badge/Models-SLM_LLM_ML_NNL-ff69b4)
 ![Education](https://img.shields.io/badge/Education-5th_Grade_English-success)
 
-**⚛️ Quantum computing nano-bits technology lab — 7 qubit modalities at nanoscale, a ≤6-qubit statevector simulator, decoherence + error-correction math, Grover & Shor teaching demos, merged SLM / LLM / ML / NNL models, 10 scout bots, a VerifyBot repeat guard, and a DeconstructionScout that breaks down the Top 20 company inventions and creates 10 NEW concept inventions from their parts.**
+**⚛️ Quantum computing nano-bits technology lab — 7 qubit modalities at nanoscale, a ≤6-qubit statevector simulator, decoherence + error-correction math, Grover & Shor teaching demos, merged SLM / LLM / ML / NNL models, 20 scout bots, a VerifyBot repeat guard, and a DeconstructionScout that breaks down the Top 20 company inventions and creates 10 NEW concept inventions from their parts.**
 
 👨‍💻 Created by Darion Kellar · 📜 MIT License · 🐍 Pure Python standard library, zero dependencies, zero network
 
@@ -37,12 +37,13 @@
 ### 🧰 Tech Stack Badges
 
 ![Qubit Modalities](https://img.shields.io/badge/Qubit_Modalities-7-purple)
-![Scout Bots](https://img.shields.io/badge/Scout_Bots-10-orange)
+![Scout Bots](https://img.shields.io/badge/Scout_Bots-20-orange)
 ![VerifyBot](https://img.shields.io/badge/VerifyBot-Repeat_Guard-red)
 ![Top 20](https://img.shields.io/badge/Top_20-Inventions-blue)
 ![New Concepts](https://img.shields.io/badge/New_Concepts-10-teal)
 ![HOLD Gates](https://img.shields.io/badge/HOLD_Gates-17-critical)
 ![Brains](https://img.shields.io/badge/Brains-Argon_4_+_Flow-purple)
+![Novelty Squad](https://img.shields.io/badge/Novelty_Squad-5_Bots-red)
 ![Platform](https://img.shields.io/badge/Platform-Linux_|_macOS_|_Windows-lightgrey)
 
 | Category | Stack |
@@ -51,7 +52,7 @@
 | ⚛️ Quantum core | Hand-written statevector simulator (complex amplitudes, H / X / Z / phase / CNOT), Bell + GHZ states, Grover + Shor teaching algorithms |
 | 🧬 Nano layer | Modality registry (size nm / temp K / gate ns / coherence µs / fidelity), nano-scale comparator, quantum-dot 1/d² designer, cryo tiers |
 | 🧠 Merged models | SLM TinySLM (bigram) · LLM TinyLLM (trigram) · ML kNN classifier · NNL TinyMLP 4-8-1 backprop — all from scratch, advisory only |
-| 🐝 Scout fleet | 10 named scout bots + VerifyBot (sha256 fingerprint repeat guard) + DeconstructionScout (Top 20 → components → new inventions) |
+| 🐝 Scout fleet | 20 named scout bots + VerifyBot (sha256 fingerprint repeat guard) + DeconstructionScout (Top 20 → components → new inventions) |
 | 📊 Data science | Decoherence T2 model, surface-code distance + physical-qubit estimator, fidelity thresholds, paper scoring of concepts |
 | 🌐 Web3 & infrastructure | 🚫 None — deliberately offline. No chain, no wallet, no network calls of any kind |
 | 🖥️ Platform support | 🐧 Linux · 🍎 macOS · 🪟 Windows — anywhere Python 3.12 runs; 🐳 Docker image included |
@@ -83,9 +84,28 @@ A normal computer bit is a switch: 0 or 1. A **nano-bit** (qubit) is a single el
 7. 🔓 **Shor teaching demo** — factors 15 = 3×5 and 21 = 3×7 by period-finding, with the threat model stated plainly: Shor threatens RSA/ECC, not AES-256.
 8. 🔬 **Quantum-dot designer** — the 1/d² confinement rule: halve the dot, quadruple the energy spacing. 40 nm = single-electron, qubit-grade regime.
 9. 🧠 **Merged SLM / LLM / ML / NNL** — four small AI models built from scratch inside the lab (details under *How this works*), fused into one advisory brief per modality. Authority: none. They can never override a HOLD gate.
-10. 🐝 **Scout bots gather → test → deploy** — 10 named bots gather local information (zero network), test 8 formulas, and deploy the passes to a **sandbox registry only**.
+10. 🐝 **Scout bots gather → test → deploy** — 20 named bots gather local information (zero network), test 8 formulas, and deploy the passes to a **sandbox registry only**.
 11. ✅ **VerifyBot checks nothing is a repeat** — re-runs every formula itself, fingerprints it with sha256, and blocks exact, renamed, and look-alike repeats. Cycle 1 deploys 7 formulas; cycle 2 deploys **0** — all 7 blocked as repeats.
 12. 🔬 **DeconstructionScout creates new inventions** — deconstructs the Top 20 company inventions into component tags and recombines parts from 3 different parents into **10 NEW concept inventions**, each VerifyBot-checked as novel.
+13. 🕵️ **Novelty squad checks the outside world** — 5 of the 20 scout bots (PriorArtScout, PatentScout, PaperScout, GitHubScout, NewsScout) exist for one job: *did anyone already create the same thing?* They compare the project name + all 10 concepts against a dated prior-art snapshot from live web searches. Command: `python3 main.py priorart`.
+
+### 🕵️ Prior-art search results (searched 2026-11-14)
+
+| Target | Same thing found? | Closest match in searched sources | Overlap |
+|---|---|---|---|
+| 📛 Project name "NanoBits-Q" | ❌ No | No project, product, or repo with this name found | 0.00 |
+| N01 SC + Color-Code + Photonic Link | ❌ No exact | Quantinuum color code below threshold — on ions | 0.62 |
+| N02 SC + Surface-Code + Cryo Control | ❌ No exact | SeeQC / D-Wave on-chip cryo control (mainstream parts) | 0.66 |
+| N03 SC + qLDPC + Cryo Control | ⚠️ Closest of all | **IBM's own roadmap** (Loon + Kookaburra + Starling) | **0.83** |
+| N04 SC + Surface-Code + Cryo Wiring | ❌ No exact | Google Willow machine + cryo wiring engineering | 0.60 |
+| N05 Topological + Toric-Code + Cryo | ❌ No | Toric code exists — on neutral atoms, not Majorana qubits | 0.45 |
+| N06 Topological + Fusion + Photonic | ❌ No | PsiQuantum fusion photonics (photonic core, not topological) | 0.50 |
+| N07 Cat + Fusion QEC + Optical Link | ⚠️ Strong prior art | PRX Quantum 5, 030322 (2024): cat-code + photon fusion paper | 0.75 |
+| N08 Ion + Surface-Code + Cryo Wiring | ❌ No exact | Quantinuum ion logical qubits (ions don't use cryo wiring) | 0.55 |
+| N09 Ion + Surface-Code + GPU Link | ❌ No exact | Helios + NVQLink — the T08 parent's own product | 0.70 |
+| N10 Atom + Surface-Code + Cryo Link | ❌ No exact | Cryo atom arrays (PRX Quantum 2026) + QuEra logical atoms, separately | 0.65 |
+
+> 🧭 Honest scope: "no exact match found" means *in the sources searched on 2026-11-14*. The components have prior art by design — that's where they came from. This is a searched-sources verdict, not legal proof of world-first novelty, and the squad's live web watch stays a HOLD gate (`scout_live_web`) — the snapshot above is data baked into the code.
 
 ---
 
@@ -100,7 +120,7 @@ A normal computer bit is a switch: 0 or 1. A **nano-bit** (qubit) is a single el
 5. **The scouts** gather records from the local registry + corpus (`live=False` on every record — they never touch the internet), test formulas against known-correct expected values, and hand the passes to VerifyBot.
 6. **VerifyBot** re-runs each formula *itself*, fingerprints the result, and searches the sandbox registry three ways. Only a `novel` verdict deploys — and only into the in-memory sandbox registry. Real deployment does not exist in this code.
 7. **DeconstructionScout** takes the Top 20 apart (core / error-correction / link / fab per invention) and builds new concepts from 3 parents at a time — e.g. a superconducting core + Quantinuum's color-code correction + a photonic interconnect. VerifyBot proves each concept is not a repeat of the Top 20 or of its siblings, then it too lands in the sandbox only.
-8. **Checks close the loop** — `python3 main.py checks` re-proves the whole system (50/50) and `pytest` proves it again from the outside (53 tests).
+8. **Checks close the loop** — `python3 main.py checks` re-proves the whole system (69/69) and `pytest` proves it again from the outside (74 tests).
 
 ### The merged models, honestly labelled
 
@@ -135,7 +155,7 @@ Because it takes the hardest technology on Earth — building computers out of s
 7. 📉 **It shows the enemy** — decoherence and the 1,000:1 error-correction tax are computed, not hand-waved. You leave understanding *why* quantum computers are hard.
 8. 🔍 **Grover and Shor without the hype** — real speedups, real limits, in numbers: 0.9966 vs 0.015625, and "quadratic only" printed right in the result.
 9. 🐍 **Zero dependencies, zero network** — the whole lab is one stdlib Python file. No installs, no API keys, no account, no tracking. It runs in a container, on a plane, forever.
-10. 🛡️ **Honesty is a feature with a test suite** — unproven claims are scored lowest (topological: 0.45), planted wrong formulas *fail on purpose*, and 53 tests + 50 checks prove the lab does what this README says.
+10. 🛡️ **Honesty is a feature with a test suite** — unproven claims are scored lowest (topological: 0.45), planted wrong formulas *fail on purpose*, and 74 tests + 69 checks prove the lab does what this README says.
 
 ---
 
@@ -154,7 +174,7 @@ Quantum computing education and research-tracking have real problems: the field 
 7. **Problem: "New" inventions are often old ones renamed.** → ✅ Solution: VerifyBot's three-way repeat check (exact fingerprint, same name, semantic look-alike) blocks renamed copies automatically — proven by cycle 2 deploying zero.
 8. **Problem: AI models in demos are black boxes with hidden authority.** → ✅ Solution: all four models here are tiny, readable, from-scratch, deterministic — and explicitly authority-free, with `can_override_hold: False` enforced in code and tested.
 9. **Problem: Quantum demos need cloud accounts, API keys, and queues.** → ✅ Solution: zero network, zero dependencies, zero accounts — the entire lab runs offline from one file, in Docker or bare Python.
-10. **Problem: Claims in READMEs (including this one) go untested.** → ✅ Solution: 53 pytest tests + 50 built-in checks re-prove every claim in this document — Bell exactness, Grover's probability, ECC math, repeat-blocking, all of it — on every run.
+10. **Problem: Claims in READMEs (including this one) go untested.** → ✅ Solution: 74 pytest tests + 69 built-in checks re-prove every claim in this document — Bell exactness, Grover's probability, ECC math, repeat-blocking, all of it — on every run.
 
 ---
 
@@ -175,7 +195,7 @@ Quantum computing education and research-tracking have real problems: the field 
    ```bash
    python3 main.py demo
    ```
-   You should see the Bell state, Grover and Shor results, the scout cycles, and `CHECKS 50/50` at the end.
+   You should see the Bell state, Grover and Shor results, the scout cycles, and `CHECKS 69/69` at the end.
 4. **Try the commands** ⌨️
    ```bash
    python3 main.py modalities                     # the 7 nano-bit modalities
@@ -198,7 +218,7 @@ Quantum computing education and research-tracking have real problems: the field 
    pip install pytest
    pytest -q
    ```
-   Expected: `53 passed`.
+   Expected: `74 passed`.
 6. **Or run it in Docker** 🐳
    ```bash
    docker build -t nanobits-q .
@@ -276,14 +296,14 @@ flowchart LR
     D --> E["SLM / LLM / ML / NNL brief"]
     E --> F["Scouts -> VerifyBot -> Sandbox"]
     F --> G["Deconstruction: Top20 -> New"]
-    G --> H["run_checks 50/50"]
+    G --> H["run_checks 69/69"]
 ```
 
 #### 2. `tests/test_main.py` — the outside proof 🧪
 
 ```mermaid
 flowchart LR
-    A["pytest"] --> B["53 tests"]
+    A["pytest"] --> B["74 tests"]
     B --> C["Sim exactness<br/>Bell / GHZ / Grover / Shor"]
     B --> D["Models<br/>SLM / LLM / ML / NNL"]
     B --> E["Scouts + VerifyBot<br/>repeats blocked"]
@@ -345,9 +365,9 @@ flowchart LR
 ```
 NanoBits-Q/
 ├── 📜 main.py                            # ONE interface: simulator, registry, decoherence, ECC, Grover/Shor, dot designer
-│                                         # + merged SLM / LLM / ML / NNL + 10 scout bots + VerifyBot + DeconstructionScout (Top 20 -> 10 new)
+│                                         # + merged SLM / LLM / ML / NNL + 20 scout bots + VerifyBot + DeconstructionScout (Top 20 -> 10 new)
 ├── 🧪 tests/
-│   └── 📜 test_main.py                   # 53 pytest tests - every claim in this README, re-proven
+│   └── 📜 test_main.py                   # 74 pytest tests - every claim in this README, re-proven
 ├── 🧭 conftest.py                        # Root path fix so bare pytest works
 ├── 📄 README.md                          # This file
 ├── 🐳 Dockerfile                         # python:3.12-slim, CMD = demo
