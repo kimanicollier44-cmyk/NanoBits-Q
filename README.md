@@ -1,3 +1,5 @@
+![NanoBits-Q Cover](assets/cover.png)
+
 # NanoBits-Q ⚛️🧬
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
